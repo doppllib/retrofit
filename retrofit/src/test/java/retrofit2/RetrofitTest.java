@@ -31,6 +31,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
+
+import co.touchlab.doppl.testing.MockGen;
 import okhttp3.HttpUrl;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -64,6 +66,16 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
+@MockGen(classes =
+        {
+                "retrofit2.RetrofitTest.MyFactory",
+                "retrofit2.RetrofitTest.MyFactory2",
+                "retrofit2.RetrofitTest.MyFactory3",
+                "retrofit2.RetrofitTest.MyFactory4",
+                "retrofit2.RetrofitTest.MyExecutor2",
+                "retrofit2.RetrofitTest.MyExecutor3"
+        }
+)
 public final class RetrofitTest {
   @Rule public final MockWebServer server = new MockWebServer();
 
@@ -756,11 +768,7 @@ public final class RetrofitTest {
   }
 
   @Test public void callFactoryUsed() throws IOException {
-    okhttp3.Call.Factory callFactory = spy(new okhttp3.Call.Factory() {
-      @Override public okhttp3.Call newCall(Request request) {
-        return new OkHttpClient().newCall(request);
-      }
-    });
+    okhttp3.Call.Factory callFactory = spy(new MyFactory());
     Retrofit retrofit = new Retrofit.Builder()
         .baseUrl(server.url("/"))
         .callFactory(callFactory)
@@ -1076,12 +1084,7 @@ public final class RetrofitTest {
 
     CallAdapter<?, ?> expectedAdapter = mock(CallAdapter.class);
     CallAdapter.Factory factory2 = mock(CallAdapter.Factory.class);
-    CallAdapter.Factory factory1 = spy(new CallAdapter.Factory() {
-      @Override
-      public CallAdapter<?, ?> get(Type returnType, Annotation[] annotations, Retrofit retrofit) {
-        return retrofit.nextCallAdapter(this, returnType, annotations);
-      }
-    });
+    CallAdapter.Factory factory1 = spy(new MyFactory2());
 
     Retrofit retrofit = new Retrofit.Builder()
         .baseUrl("http://example.com/")
@@ -1106,18 +1109,8 @@ public final class RetrofitTest {
 
     CallAdapter<?, ?> expectedAdapter = mock(CallAdapter.class);
     CallAdapter.Factory factory3 = mock(CallAdapter.Factory.class);
-    CallAdapter.Factory factory2 = spy(new CallAdapter.Factory() {
-      @Override
-      public CallAdapter<?, ?> get(Type returnType, Annotation[] annotations, Retrofit retrofit) {
-        return retrofit.nextCallAdapter(this, returnType, annotations);
-      }
-    });
-    CallAdapter.Factory factory1 = spy(new CallAdapter.Factory() {
-      @Override
-      public CallAdapter<?, ?> get(Type returnType, Annotation[] annotations, Retrofit retrofit) {
-        return retrofit.nextCallAdapter(this, returnType, annotations);
-      }
-    });
+    CallAdapter.Factory factory2 = spy(new MyFactory3());
+    CallAdapter.Factory factory1 = spy(new MyFactory4());
 
     Retrofit retrofit = new Retrofit.Builder()
         .baseUrl("http://example.com/")
@@ -1237,11 +1230,7 @@ public final class RetrofitTest {
   }
 
   @Test public void callbackExecutorUsedForSuccess() throws InterruptedException {
-    Executor executor = spy(new Executor() {
-      @Override public void execute(Runnable command) {
-        command.run();
-      }
-    });
+    Executor executor = spy(new MyExecutor2());
     Retrofit retrofit = new Retrofit.Builder()
         .baseUrl(server.url("/"))
         .callbackExecutor(executor)
@@ -1268,11 +1257,7 @@ public final class RetrofitTest {
   }
 
   @Test public void callbackExecutorUsedForFailure() throws InterruptedException {
-    Executor executor = spy(new Executor() {
-      @Override public void execute(Runnable command) {
-        command.run();
-      }
-    });
+    Executor executor = spy(new MyExecutor3());
     Retrofit retrofit = new Retrofit.Builder()
         .baseUrl(server.url("/"))
         .callbackExecutor(executor)
@@ -1331,5 +1316,44 @@ public final class RetrofitTest {
     assertEquals("b", response2.body());
 
     assertEquals("/?i=201", server.takeRequest().getPath());
+  }
+
+  public static class MyFactory implements okhttp3.Call.Factory {
+    @Override public okhttp3.Call newCall(Request request) {
+      return new OkHttpClient().newCall(request);
+    }
+  }
+
+  public static class MyFactory2 extends CallAdapter.Factory {
+    @Override
+    public CallAdapter<?, ?> get(Type returnType, Annotation[] annotations, Retrofit retrofit) {
+      return retrofit.nextCallAdapter(this, returnType, annotations);
+    }
+  }
+
+  public static class MyFactory3 extends CallAdapter.Factory {
+    @Override
+    public CallAdapter<?, ?> get(Type returnType, Annotation[] annotations, Retrofit retrofit) {
+      return retrofit.nextCallAdapter(this, returnType, annotations);
+    }
+  }
+
+  public static class MyFactory4 extends CallAdapter.Factory {
+    @Override
+    public CallAdapter<?, ?> get(Type returnType, Annotation[] annotations, Retrofit retrofit) {
+      return retrofit.nextCallAdapter(this, returnType, annotations);
+    }
+  }
+
+  public static class MyExecutor2 implements Executor {
+    @Override public void execute(Runnable command) {
+      command.run();
+    }
+  }
+
+  public static class MyExecutor3 implements Executor {
+    @Override public void execute(Runnable command) {
+      command.run();
+    }
   }
 }

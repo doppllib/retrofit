@@ -16,18 +16,19 @@
 package retrofit2;
 
 import android.net.Uri;
+
+import co.touchlab.doppl.testing.DopplContextDelegateTestRunner;
 import okhttp3.Request;
 import okhttp3.ResponseBody;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
 import retrofit2.http.GET;
 import retrofit2.http.Url;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static retrofit2.RequestBuilderTest.buildRequest;
 
-@RunWith(RobolectricTestRunner.class)
+@RunWith(DopplContextDelegateTestRunner.class)
 @SuppressWarnings({"UnusedParameters", "unused"}) // Parameters inspected reflectively.
 public final class RequestBuilderAndroidTest {
   @Test public void getWithAndroidUriUrl() {

@@ -15,15 +15,13 @@
  */
 package retrofit2;
 
-import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
-import java.lang.invoke.MethodHandles.Lookup;
-import java.lang.reflect.Constructor;
+
 import java.lang.reflect.Method;
 import java.util.concurrent.Executor;
+
 import javax.annotation.Nullable;
-import org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement;
 
 class Platform {
   private static final Platform PLATFORM = findPlatform();
@@ -33,19 +31,7 @@ class Platform {
   }
 
   private static Platform findPlatform() {
-    try {
-      Class.forName("android.os.Build");
-      if (Build.VERSION.SDK_INT != 0) {
-        return new Android();
-      }
-    } catch (ClassNotFoundException ignored) {
-    }
-    try {
-      Class.forName("java.util.Optional");
-      return new Java8();
-    } catch (ClassNotFoundException ignored) {
-    }
-    return new Platform();
+    return new Android();
   }
 
   @Nullable Executor defaultCallbackExecutor() {
@@ -66,25 +52,6 @@ class Platform {
   @Nullable Object invokeDefaultMethod(Method method, Class<?> declaringClass, Object object,
       @Nullable Object... args) throws Throwable {
     throw new UnsupportedOperationException();
-  }
-
-  @IgnoreJRERequirement // Only classloaded and used on Java 8.
-  static class Java8 extends Platform {
-    @Override boolean isDefaultMethod(Method method) {
-      return method.isDefault();
-    }
-
-    @Override Object invokeDefaultMethod(Method method, Class<?> declaringClass, Object object,
-        @Nullable Object... args) throws Throwable {
-      // Because the service interface might not be public, we need to use a MethodHandle lookup
-      // that ignores the visibility of the declaringClass.
-      Constructor<Lookup> constructor = Lookup.class.getDeclaredConstructor(Class.class, int.class);
-      constructor.setAccessible(true);
-      return constructor.newInstance(declaringClass, -1 /* trusted */)
-          .unreflectSpecial(method, declaringClass)
-          .bindTo(object)
-          .invokeWithArguments(args);
-    }
   }
 
   static class Android extends Platform {

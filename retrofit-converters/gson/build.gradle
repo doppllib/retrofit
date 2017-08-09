@@ -1,0 +1,51 @@
+
+apply plugin: 'java'
+apply plugin: 'co.doppl.gradle'
+apply plugin: 'maven-publish'
+apply plugin: 'net.ltgt.apt'
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+dependencies {
+  testCompile 'junit:junit:4.11'
+
+  compileOnly 'com.google.code.findbugs:jsr305:3.0.2'
+
+  testCompile "co.doppl.lib:androidbasetest:$project.ext.javaCoreVersion"
+  testDoppl "co.doppl.lib:androidbasetest:$project.ext.dopplCoreVersion"
+
+  testCompile 'com.google.guava:guava:19.0'
+
+  compile "com.squareup.okhttp3:okhttp:$project.ext.javaOkhttpVersion"
+  doppl "co.doppl.com.squareup.okhttp3:okhttp:$project.ext.dopplOkhttpVersion"
+
+  testCompile "com.squareup.okhttp3:mockwebserver:$project.ext.javaOkhttpVersion"
+  testDoppl "co.doppl.com.squareup.okhttp3:mockwebserver:$project.ext.dopplOkhttpVersion"
+
+  testApt "co.doppl.lib:testapt:$project.ext.javaCoreVersion"
+
+  compile project(':retrofit')
+  doppl project(':retrofit')
+
+  compile "com.google.code.gson:gson:2.6.2"
+  doppl "co.doppl.com.google.code.gson:gson:2.6.2.3"
+
+  testCompile 'org.assertj:assertj-core:1.7.0'
+  testDoppl 'co.doppl.org.assertj:assertj-core:1.7.0.0'
+}
+
+ext.artifactId = 'converter-gson'
+
+apply from: "$dopplSharedScriptHome/doppllibpublish.gradle"
+apply from: "$dopplSharedScriptHome/bintray.gradle"
+
+test{
+  enabled = false
+}
+
+dopplConfig {
+  copyMainOutput "../retrofit-converter-gson/retrofitframework/main"
+  copyTestOutput "../retrofit-converter-gson/retrofitframework/test"
+  copyDependencies true
+}

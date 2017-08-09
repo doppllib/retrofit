@@ -21,6 +21,8 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.concurrent.Executor;
+
+import co.touchlab.doppl.testing.MockGen;
 import okhttp3.Request;
 import org.junit.Test;
 
@@ -33,6 +35,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 @SuppressWarnings("unchecked")
+@MockGen(classes = "retrofit2.ExecutorCallAdapterFactoryTest.MyExecutor")
 public final class ExecutorCallAdapterFactoryTest {
   private static final Annotation[] NO_ANNOTATIONS = new Annotation[0];
 
@@ -40,11 +43,7 @@ public final class ExecutorCallAdapterFactoryTest {
       .baseUrl("http://localhost:1")
       .build();
   private final Callback<String> callback = mock(Callback.class);
-  private final Executor callbackExecutor = spy(new Executor() {
-    @Override public void execute(Runnable runnable) {
-      runnable.run();
-    }
-  });
+  private final Executor callbackExecutor = spy(new MyExecutor());
   private final CallAdapter.Factory factory = new ExecutorCallAdapterFactory(callbackExecutor);
 
   @Test public void rawTypeThrows() {
@@ -165,6 +164,12 @@ public final class ExecutorCallAdapterFactoryTest {
 
     @Override public Request request() {
       throw new UnsupportedOperationException();
+    }
+  }
+
+  public static class MyExecutor implements Executor {
+    @Override public void execute(Runnable runnable) {
+      runnable.run();
     }
   }
 }

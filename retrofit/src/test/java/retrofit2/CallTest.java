@@ -21,6 +21,8 @@ import java.lang.reflect.Type;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
+
+import co.touchlab.doppl.testing.MockGen;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
@@ -49,6 +51,7 @@ import static org.junit.Assert.fail;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
+@MockGen(classes = "retrofit2.CallTest.ActualConverter")
 public final class CallTest {
   @Rule public final MockWebServer server = new MockWebServer();
 
@@ -369,11 +372,7 @@ public final class CallTest {
   }
 
   @Test public void http204SkipsConverter() throws IOException {
-    final Converter<ResponseBody, String> converter = spy(new Converter<ResponseBody, String>() {
-      @Override public String convert(ResponseBody value) throws IOException {
-        return value.string();
-      }
-    });
+    final Converter<ResponseBody, String> converter = spy(new ActualConverter());
     Retrofit retrofit = new Retrofit.Builder()
         .baseUrl(server.url("/"))
         .addConverterFactory(new ToStringConverterFactory() {
@@ -395,11 +394,7 @@ public final class CallTest {
   }
 
   @Test public void http205SkipsConverter() throws IOException {
-    final Converter<ResponseBody, String> converter = spy(new Converter<ResponseBody, String>() {
-      @Override public String convert(ResponseBody value) throws IOException {
-        return value.string();
-      }
-    });
+    final Converter<ResponseBody, String> converter = spy(new ActualConverter());
     Retrofit retrofit = new Retrofit.Builder()
         .baseUrl(server.url("/"))
         .addConverterFactory(new ToStringConverterFactory() {
@@ -977,5 +972,11 @@ public final class CallTest {
       assertThat(e).hasMessage("Broken!");
     }
     assertThat(writeCount.get()).isEqualTo(1);
+  }
+
+  public static class ActualConverter implements Converter<ResponseBody, String> {
+    @Override public String convert(ResponseBody value) throws IOException {
+      return value.string();
+    }
   }
 }
