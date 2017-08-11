@@ -34,6 +34,8 @@ import retrofit2.http.GET;
 import retrofit2.http.HTTP;
 import retrofit2.http.Header;
 import retrofit2.http.Url;
+import retrofit2.ios.IosCallFactory;
+
 
 import static java.util.Collections.unmodifiableList;
 import static retrofit2.Utils.checkNotNull;
@@ -565,7 +567,7 @@ public final class Retrofit {
 
       okhttp3.Call.Factory callFactory = this.callFactory;
       if (callFactory == null) {
-        callFactory = new OkHttpClient();
+        callFactory = new IosCallFactory();
       }
 
       Executor callbackExecutor = this.callbackExecutor;

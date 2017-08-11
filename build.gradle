@@ -23,7 +23,7 @@ allprojects {
 }
 
 subprojects{
-    group = 'co.doppl.com.squareup.retrofit2.nossl'
+    group = 'co.doppl.com.squareup.retrofit2.httpurl'
     version = '2.3.0.0'
     ext.bintrayGitUrl = 'https://github.com/kpgalligan/retrofit.git'
     ext.javaCoreVersion = '0.8.1'
