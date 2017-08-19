@@ -8,15 +8,9 @@ import okhttp3.Request;
 
 public class UrlSessionCallFactory implements okhttp3.Call.Factory
 {
-//    private final Dispatcher dispatcher = new Dispatcher();
-
     @Override
     public Call newCall(Request request)
     {
-        return new UrlSessionCall(this, request);
+        return new UrlSessionCall(request);
     }
-
-    /*public Dispatcher dispatcher(){
-        return dispatcher;
-    }*/
 }

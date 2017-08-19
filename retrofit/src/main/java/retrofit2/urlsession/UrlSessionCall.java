@@ -1,19 +1,21 @@
 package retrofit2.urlsession;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicReference;
 
 import okhttp3.Callback;
 import okhttp3.Headers;
+import okhttp3.HttpUrl;
 import okhttp3.MediaType;
 import okhttp3.Protocol;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import okhttp3.internal.Util;
 import okhttp3.internal.Version;
 import okhttp3.internal.http.RealResponseBody;
 import okio.Buffer;
@@ -22,6 +24,12 @@ import okio.Source;
 
 /*-[
 #include "java/lang/Double.h"
+#include "com/google/j2objc/net/NSErrorException.h"
+#include "java/lang/Double.h"
+#include "java/net/ConnectException.h"
+#include "java/net/MalformedURLException.h"
+#include "java/net/UnknownHostException.h"
+#include "java/net/SocketTimeoutException.h"
 ]-*/
 
 /**
@@ -31,52 +39,17 @@ import okio.Source;
 public class UrlSessionCall implements okhttp3.Call
 {
     private final Request originalRequest;
-    private final UrlSessionCallFactory client;
-    private List<HeaderEntry> headers = new ArrayList<HeaderEntry>();
-    // Guarded by this.
-    private boolean executed;
+    private final List<HeaderEntry> headers = new ArrayList<HeaderEntry>();
 
-    private final Object getResponseLock = new Object();
-    private int responseCode;
-    private Response response;
-    private CountDownLatch latch = new CountDownLatch(1);
+    private volatile boolean executed;
 
-    public UrlSessionCall(UrlSessionCallFactory client, Request originalRequest)
+    private final AtomicReference<Response>    response = new AtomicReference<>();
+    private final AtomicReference<IOException> responseError = new AtomicReference<>();
+    private final CountDownLatch latch = new CountDownLatch(1);
+
+    public UrlSessionCall(Request originalRequest)
     {
         this.originalRequest = originalRequest;
-        this.client = client;
-    }
-
-    public void constructResponse(int responseCode, byte[] body) throws IOException {
-
-        Protocol protocol = Protocol.HTTP_1_1;
-
-        Headers.Builder builder = new Headers.Builder();
-        for(HeaderEntry header : headers)
-        {
-            builder.add(header.getKey(), header.getValue());
-        }
-        Headers headers = builder.build();
-
-        Response.Builder responseBuilder = new Response.Builder()
-                .request(originalRequest)
-                .protocol(protocol)
-                .code(responseCode)
-                //TODO: Figure out how to parse message
-                .message(findStandardResponseMessageForCode(responseCode))
-                .headers(headers);
-
-        Buffer buffer = new Buffer();
-        buffer.write(body);
-
-        RealResponseBody responseBody = new RealResponseBody(headers,
-                Okio.buffer((Source) buffer));
-
-        responseBuilder.body(responseBody);
-
-        response = responseBuilder.build();
-
-        latch.countDown();
     }
 
     @Override
@@ -85,118 +58,101 @@ public class UrlSessionCall implements okhttp3.Call
         return originalRequest;
     }
 
-    public Request prepRequestHeaders(Request userRequest) throws IOException
+    @Override
+    public Response execute() throws IOException
+    {
+        synchronized(this)
+        {
+            if(executed)
+            {
+                throw new IllegalStateException("Already Executed");
+            }
+            executed = true;
+        }
+
+        runRequestCall();
+
+        try
+        {
+            latch.await();
+        }
+        catch(InterruptedException e)
+        {
+            throw new RuntimeException("What?", e);
+        }
+
+        if(responseError.get() != null)
+        {
+            throw responseError.get();
+        }
+
+        if(response.get() == null)
+        {
+            throw new IOException("Canceled");
+        }
+
+        return response.get();
+    }
+
+    private void runRequestCall() throws IOException
+    {
+        Request request = prepRequestHeaders(originalRequest);
+        Headers headers = request.headers();
+
+        for(String key : headers.names())
+        {
+            addHeader(key, headers.get(key));
+        }
+
+        byte[] body = null;
+
+        if(request.body() != null)
+        {
+            Buffer buffer = new Buffer();
+            request.body().writeTo(buffer);
+            buffer.flush();
+
+            body = buffer.readByteArray();
+        }
+
+        makeRequest(request.url().url().toExternalForm(), request.method(), body);
+    }
+
+    private Request prepRequestHeaders(Request userRequest) throws IOException
     {
         Request.Builder requestBuilder = userRequest.newBuilder();
 
         RequestBody body = userRequest.body();
-        if (body != null) {
+        if(body != null)
+        {
             MediaType contentType = body.contentType();
-            if (contentType != null) {
+            if(contentType != null)
+            {
                 requestBuilder.header("Content-Type", contentType.toString());
             }
 
             long contentLength = body.contentLength();
-            if (contentLength != -1) {
+            if(contentLength != - 1)
+            {
                 requestBuilder.header("Content-Length", Long.toString(contentLength));
                 requestBuilder.removeHeader("Transfer-Encoding");
-            } else {
+            }
+            else
+            {
                 requestBuilder.header("Transfer-Encoding", "chunked");
                 requestBuilder.removeHeader("Content-Length");
             }
         }
 
-        if (userRequest.header("User-Agent") == null) {
-            requestBuilder.header("User-Agent", "doppl-"+ Version.userAgent());
+        if(userRequest.header("User-Agent") == null)
+        {
+            requestBuilder.header("User-Agent", "doppl-" + Version.userAgent());
         }
 
         return requestBuilder.build();
     }
 
-    @Override
-    public Response execute() throws IOException
-    {
-        synchronized (this) {
-            if (executed) throw new IllegalStateException("Already Executed");
-            executed = true;
-        }
-        try {
-//            client.dispatcher().executed(this);
-
-            Request request = prepRequestHeaders(originalRequest);
-            Headers headers = request.headers();
-
-            Iterator<String> iterator = headers.names().iterator();
-            while(iterator.hasNext())
-            {
-                String key = iterator.next();
-                addHeader(key, headers.get(key));
-            }
-
-            byte[] body = null;
-
-            if(request.body() != null)
-            {
-                Buffer buffer = new Buffer();
-                request.body().writeTo(buffer);
-                buffer.flush();
-
-                body = buffer.readByteArray();
-                String bodyString = new String(body);
-                System.out.println("BODY_STRING: |"+ bodyString +"|");
-            }
-
-            makeRequest(request.url().url().toExternalForm(), request.method(),
-                    body);
-
-            try
-            {
-                latch.await();
-            }
-            catch(InterruptedException e)
-            {
-                throw new RuntimeException("What?", e);
-            }
-
-            if (response == null) throw new IOException("Canceled");
-            return response;
-        } finally {
-//            client.dispatcher().finished(this);
-        }
-    }
-
-    /*private Response getResponseWithInterceptorChain() throws IOException {
-        // Build a full stack of interceptors.
-        try
-        {
-            List<retrofit2.ios.Interceptor> interceptors = new ArrayList<>();
-//            interceptors.addAll(client.interceptors());
-//            interceptors.add(retryAndFollowUpInterceptor);
-            interceptors.add(new BridgeInterceptor(client.cookieJar()));
-//            interceptors.add(new CacheInterceptor(client.internalCache()));
-//            interceptors.add(new ConnectInterceptor(client));
-            interceptors.addAll(client.networkInterceptors());
-//            interceptors.add(new CallServerInterceptor(false));
-
-            retrofit2.ios.Interceptor.Chain chain = new RealInterceptorChain(
-                    interceptors, null, 0, originalRequest);
-            return chain.proceed(originalRequest);
-        }
-        catch(Throwable e)
-        {
-            if(e instanceof IOException)
-                throw  (IOException)e;
-
-            e.printStackTrace();
-
-            if(e instanceof RuntimeException)
-                throw (RuntimeException)e;
-
-            throw new RuntimeException(e);
-        }
-    }*/
-
-    private native void makeRequest(String urlString, String method, byte[] body)throws IOException /*-[
+    private native void makeRequest(String urlString, String method, byte[] body) throws IOException /*-[
     NSMutableURLRequest *request =
           [NSMutableURLRequest requestWithURL:[NSURL URLWithString:urlString]];
       request.cachePolicy = NSURLRequestUseProtocolCachePolicy;
@@ -222,7 +178,40 @@ public class UrlSessionCall implements okhttp3.Call
           [NSURLSession sessionWithConfiguration:sessionConfiguration
                                         delegate:(id<NSURLSessionDataDelegate>)self
                                    delegateQueue:nil];
-      NSURLSessionTask *task = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable urlResponse, NSError * _Nullable error) {
+      NSURLSessionTask *task = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable urlResponse,
+      NSError * _Nullable error) {
+        if (error) {
+            JavaIoIOException *responseException = nil;
+              NSString *url = urlString;  // Use original URL in any error text.
+              if ([[error domain] isEqualToString:@"NSURLErrorDomain"]) {
+                switch ([error code]) {
+                  case NSURLErrorBadURL:
+                    responseException = create_JavaNetMalformedURLException_initWithNSString_(url);
+                    break;
+                  case NSURLErrorCannotConnectToHost:
+                    responseException =
+                        create_JavaNetConnectException_initWithNSString_([error description]);
+                    break;
+                  case NSURLErrorSecureConnectionFailed:
+                    responseException = [self secureConnectionExceptionWithNSString:[error description]];
+                    break;
+                  case NSURLErrorCannotFindHost:
+                    responseException = create_JavaNetUnknownHostException_initWithNSString_(url);
+                    break;
+                  case NSURLErrorTimedOut:
+                    responseException = create_JavaNetSocketTimeoutException_initWithNSString_(url);
+                    break;
+                }
+              }
+              if (!responseException) {
+                responseException = create_JavaIoIOException_initWithNSString_([error description]);
+              }
+              ComGoogleJ2objcNetNSErrorException *cause =
+                  create_ComGoogleJ2objcNetNSErrorException_initWithId_(error);
+              [responseException initCauseWithNSException:cause];
+               [self sendErrorWithJavaIoIOException:responseException];
+        }
+        else {
 
             if (urlResponse && ![urlResponse isKindOfClass:[NSHTTPURLResponse class]]) {
               @throw AUTORELEASE(([[JavaLangAssertionError alloc]
@@ -241,34 +230,108 @@ public class UrlSessionCall implements okhttp3.Call
               [self addHeaderWithNSString:key withNSString:value];
             }];
 
-            if (error!=nil)
-            {
-                //completionBlock(nil,error,0);
-
-            }
-            else
-            {
                 [self constructResponseWithInt:responseCode withByteArray:[IOSByteArray arrayWithNSData:data]];
-            }
-
-//            [task suspend];
-
+        }
         }];
       [task resume];
-//      JreStrongAssign(&self->nativeDataTask_, task);
-//      [session finishTasksAndInvalidate];
+      ]-*/;
 
-      ]-*/
-    ;
+    /**
+     * Build exception for ssl issues
+     * @param description
+     * @return
+     */
+    private static IOException secureConnectionException(String description)
+    {
+        try
+        {
+            Class<?> sslExceptionClass = Class.forName("javax.net.ssl.SSLException");
+            Constructor<?> constructor = sslExceptionClass.getConstructor(String.class);
+            return (IOException) constructor.newInstance(description);
+        }
+        catch(ClassNotFoundException e)
+        {
+            return new IOException(description);
+        }
+        catch(Exception e)
+        {
+            throw new AssertionError("unexpected exception", e);
+        }
+    }
 
-    private void addHeader(String k, String v) {
+    public void sendError(IOException ex)
+    {
+        if(responseCallback != null)
+        {
+            responseCallback.onFailure(this, ex);
+        }
+        else
+        {
+            responseError.set(ex);
+            latch.countDown();
+        }
+    }
+
+    public void constructResponse(int responseCode, byte[] body) throws IOException
+    {
+
+        Protocol protocol = Protocol.HTTP_1_1;
+
+        Headers.Builder builder = new Headers.Builder();
+        for(HeaderEntry header : headers)
+        {
+            builder.add(header.getKey(), header.getValue());
+        }
+        Headers headers = builder.build();
+
+        Response.Builder responseBuilder = new Response.Builder().request(originalRequest)
+                .protocol(protocol)
+                .code(responseCode)
+                //TODO: Figure out how to parse message
+                .message(findStandardResponseMessageForCode(responseCode))
+                .headers(headers);
+
+        Buffer buffer = new Buffer();
+        buffer.write(body);
+
+        RealResponseBody responseBody = new RealResponseBody(headers, Okio.buffer((Source) buffer));
+
+        responseBuilder.body(responseBody);
+
+        if(responseCallback != null)
+        {
+            responseCallback.onResponse(this, responseBuilder.build());
+        }
+        else
+        {
+            response.set(responseBuilder.build());
+            latch.countDown();
+        }
+    }
+
+    private void addHeader(String k, String v)
+    {
         headers.add(new HeaderEntry(k, v));
     }
+
+    private okhttp3.Callback responseCallback;
 
     @Override
     public void enqueue(Callback responseCallback)
     {
-        throw new UnsupportedOperationException("enqueue not implemented yet");
+        this.responseCallback = responseCallback;
+        try
+        {
+            runRequestCall();
+        }
+        catch(IOException e)
+        {
+            responseCallback.onFailure(this, e);
+        }
+        catch(Throwable e)
+        {
+            responseCallback.onFailure(this, new IOException(e));
+        }
     }
 
     @Override
@@ -280,7 +343,7 @@ public class UrlSessionCall implements okhttp3.Call
     @Override
     public boolean isExecuted()
     {
-        return false;
+        return executed;
     }
 
     @Override
@@ -289,27 +352,32 @@ public class UrlSessionCall implements okhttp3.Call
         return false;
     }
 
-    private static class HeaderEntry implements Map.Entry<String, String> {
+    private static class HeaderEntry implements Map.Entry<String, String>
+    {
         private final String key;
         private final String value;
 
-        HeaderEntry(String k, String v) {
+        HeaderEntry(String k, String v)
+        {
             this.key = k;
             this.value = v;
         }
 
         @Override
-        public String getKey() {
+        public String getKey()
+        {
             return key;
         }
 
         @Override
-        public String getValue() {
+        public String getValue()
+        {
             return value;
         }
 
         @Override
-        public String setValue(String object) {
+        public String setValue(String object)
+        {
             throw new AssertionError("mutable method called on immutable class");
         }
     }
@@ -317,6 +385,4 @@ public class UrlSessionCall implements okhttp3.Call
     private native String findStandardResponseMessageForCode(int code)/*-[
         return [NSHTTPURLResponse localizedStringForStatusCode:code];
     ]-*/;
-
-
 }
