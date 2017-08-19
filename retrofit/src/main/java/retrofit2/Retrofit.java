@@ -35,6 +35,7 @@ import retrofit2.http.HTTP;
 import retrofit2.http.Header;
 import retrofit2.http.Url;
 import retrofit2.ios.IosCallFactory;
+import retrofit2.urlsession.UrlSessionCallFactory;
 
 
 import static java.util.Collections.unmodifiableList;
@@ -566,8 +567,9 @@ public final class Retrofit {
       }
 
       okhttp3.Call.Factory callFactory = this.callFactory;
+      boolean useUrlsession = true;
       if (callFactory == null) {
-        callFactory = new IosCallFactory();
+        callFactory = useUrlsession ? new UrlSessionCallFactory() : new IosCallFactory();
       }
 
       Executor callbackExecutor = this.callbackExecutor;

@@ -1,0 +1,159 @@
+ /*
+   * NSURLSessionDataDelegate method: initial reply received.
+   */
+  /*-[
+  - (void)URLSession:(NSURLSession *)session
+            dataTask:(NSURLSessionDataTask *)dataTask
+  didReceiveResponse:(NSURLResponse *)urlResponse
+   completionHandler:(void (^)(NSURLSessionResponseDisposition disposition))completionHandler {
+    if (urlResponse && ![urlResponse isKindOfClass:[NSHTTPURLResponse class]]) {
+      @throw AUTORELEASE(([[JavaLangAssertionError alloc]
+                           initWithId:[NSString stringWithFormat:@"Unknown class %@",
+                               NSStringFromClass([urlResponse class])]]));
+    }
+    NSHTTPURLResponse *response = (NSHTTPURLResponse *) urlResponse;
+    int responseCode = (int) response.statusCode;
+    JavaNetHttpURLConnection_set_responseMessage_(self,
+        ComGoogleJ2objcNetIosHttpURLConnection_getResponseStatusTextWithInt_(responseCode));
+
+    // Clear request headers to make room for the response headers.
+    [self->headers_ clear];
+
+    // Copy remaining response headers.
+    [response.allHeaderFields enumerateKeysAndObjectsUsingBlock:
+        ^(id key, id value, BOOL *stop) {
+      [self addHeaderWithNSString:key withNSString:value];
+    }];
+
+    if (response.statusCode >= JavaNetHttpURLConnection_HTTP_BAD_REQUEST) {
+      // Make errorDataStream an alias to responseBodyStream. Since getInputStream() throws an
+      // exception when status code >= HTTP_BAD_REQUEST, it is guaranteed that responseBodyStream
+      // can only mean error stream going forward.
+      JreStrongAssign(&self->errorDataStream_, self->responseBodyStream_);
+    }
+
+    completionHandler(NSURLSessionResponseAllow);
+
+    // Since the original request might have been redirected, we might need to
+    // update the URL to the redirected URL.
+    JavaNetURLConnection_set_url_(
+        self, create_JavaNetURL_initWithNSString_(response.URL.absoluteString));
+
+    // Unblock getResponse().
+    @synchronized(getResponseLock_) {
+      self->responseCode_ = responseCode;
+      [self->getResponseLock_ java_notifyAll];
+    }
+  }
+  ]-*/
+
+  /*
+   * NSURLSessionDataDelegate method: data received.
+   */
+  /*-[
+  - (void)URLSession:(NSURLSession *)session
+            dataTask:(NSURLSessionDataTask *)dataTask
+      didReceiveData:(NSData *)data {
+    @synchronized(responseBodyStreamLock_) {
+      [self->responseBodyStream_ offerDataWithByteArray:[IOSByteArray arrayWithNSData:data]];
+    }
+  }
+  ]-*/
+
+  /*
+   * NSURLSessionDataDelegate method: should we store the response in the cache.
+   */
+  /*-[
+  - (void)URLSession:(NSURLSession *)session
+            dataTask:(NSURLSessionDataTask *)dataTask
+   willCacheResponse:(NSCachedURLResponse *)proposedResponse
+   completionHandler:(void (^)(NSCachedURLResponse *cachedResponse))completionHandler {
+    completionHandler( self->useCaches_ ? proposedResponse : nil );
+  }
+  ]-*/
+
+
+  /*
+   * NSURLSessionDelegate method: task completed.
+   */
+  /*-[
+  - (void)URLSession:(NSURLSession *)session
+                task:(NSURLSessionTask *)task
+didCompleteWithError:(NSError *)error {
+    JavaIoIOException *responseException = nil;
+    if (error) {
+      NSString *url = [self->url_ description];  // Use original URL in any error text.
+      if ([[error domain] isEqualToString:@"NSURLErrorDomain"]) {
+        switch ([error code]) {
+          case NSURLErrorBadURL:
+            responseException = create_JavaNetMalformedURLException_initWithNSString_(url);
+            break;
+          case NSURLErrorCannotConnectToHost:
+            responseException =
+                create_JavaNetConnectException_initWithNSString_([error description]);
+            break;
+          case NSURLErrorSecureConnectionFailed:
+            responseException = RETAIN_(
+                ComGoogleJ2objcNetIosHttpURLConnection_secureConnectionExceptionWithNSString_
+                    ([error description]));
+            break;
+          case NSURLErrorCannotFindHost:
+            responseException = create_JavaNetUnknownHostException_initWithNSString_(url);
+            break;
+          case NSURLErrorTimedOut:
+            responseException = create_JavaNetSocketTimeoutException_initWithNSString_(url);
+            break;
+        }
+      }
+      if (!responseException) {
+        responseException = create_JavaIoIOException_initWithNSString_([error description]);
+      }
+      ComGoogleJ2objcNetNSErrorException *cause =
+          create_ComGoogleJ2objcNetNSErrorException_initWithId_(error);
+      [responseException initCauseWithNSException:cause];
+    }
+
+    @synchronized(responseBodyStreamLock_) {
+      if (!responseException) {
+        // No error, close the responseBodyStream.
+        [self->responseBodyStream_ endOffering];
+      } else {
+        // Close responseBodyStream with the exception so that subsequent calls to read() cause the
+        // same exception to be thrown.
+        [self->responseBodyStream_ endOfferingWithJavaIoIOException:responseException];
+      }
+    }
+
+    // Set nativeDataTask to null.
+    @synchronized(nativeDataTaskLock_) {
+      JreStrongAssign(&self->nativeDataTask_, nil);
+    }
+
+    // Unblock getResponse() and set responseException. This call to notifyAll() is needed because
+    // -URLSession:dataTask:didReceiveResponse: may not be called if a non-server error (such as
+    // lost connection) occurs.
+    @synchronized(getResponseLock_) {
+      JreStrongAssign(&self->responseException_, responseException);
+      [self->getResponseLock_ java_notifyAll];
+    }
+  }
+  ]-*/
+
+  /*
+   * NSURLSessionDelegate method: session completed.
+   */
+  /*-[
+  - (void)URLSession:(NSURLSession *)session didBecomeInvalidWithError:(NSError *)error {
+    if (error) {
+      // Cannot return error since this happened on another thread and the task
+      // finished, so just log it.
+      ComGoogleJ2objcNetNSErrorException *exception =
+          create_ComGoogleJ2objcNetNSErrorException_initWithId_(error);
+      JavaUtilLoggingLogger *logger = JavaUtilLoggingLogger_getLoggerWithNSString_(
+          [[self java_getClass] getName]);
+      [logger logWithJavaUtilLoggingLevel:JreLoadStatic(JavaUtilLoggingLevel, SEVERE)
+                             withNSString:@"session invalidated with error"
+                          withNSException:exception];
+    }
+  }
+  ]-*/

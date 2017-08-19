@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		63403AC01F409DB5009CD3BD /* NetowrkHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 63403ABF1F409DB5009CD3BD /* NetowrkHelper.m */; };
 		637643101F1B1DC000867934 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 6376430F1F1B1DC000867934 /* main.m */; };
 		637643131F1B1DC000867934 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 637643121F1B1DC000867934 /* AppDelegate.m */; };
 		637643161F1B1DC000867934 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 637643151F1B1DC000867934 /* ViewController.m */; };
@@ -1392,6 +1393,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		63403ABE1F409DB5009CD3BD /* NetowrkHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetowrkHelper.h; sourceTree = "<group>"; };
+		63403ABF1F409DB5009CD3BD /* NetowrkHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NetowrkHelper.m; sourceTree = "<group>"; };
 		6376430B1F1B1DC000867934 /* iostest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iostest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6376430F1F1B1DC000867934 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		637643111F1B1DC000867934 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -2817,6 +2820,8 @@
 				6376431C1F1B1DC000867934 /* LaunchScreen.storyboard */,
 				6376431F1F1B1DC000867934 /* Info.plist */,
 				6376430E1F1B1DC000867934 /* Supporting Files */,
+				63403ABE1F409DB5009CD3BD /* NetowrkHelper.h */,
+				63403ABF1F409DB5009CD3BD /* NetowrkHelper.m */,
 			);
 			path = iostest;
 			sourceTree = "<group>";
@@ -5134,6 +5139,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				63403AC01F409DB5009CD3BD /* NetowrkHelper.m in Sources */,
 				637643161F1B1DC000867934 /* ViewController.m in Sources */,
 				637643131F1B1DC000867934 /* AppDelegate.m in Sources */,
 				637643101F1B1DC000867934 /* main.m in Sources */,
@@ -6154,6 +6160,7 @@
 				6376433A1F1B1DC000867934 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		6376433B1F1B1DC000867934 /* Build configuration list for PBXNativeTarget "iostestTests" */ = {
 			isa = XCConfigurationList;
@@ -6162,6 +6169,7 @@
 				6376433D1F1B1DC000867934 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		6376433E1F1B1DC000867934 /* Build configuration list for PBXNativeTarget "iostestUITests" */ = {
 			isa = XCConfigurationList;
@@ -6170,6 +6178,7 @@
 				637643401F1B1DC000867934 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		6376435D1F1B1DD600867934 /* Build configuration list for PBXNativeTarget "dopplframework" */ = {
 			isa = XCConfigurationList;
@@ -6178,6 +6187,7 @@
 				6376435F1F1B1DD600867934 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		637643611F1B1DD600867934 /* Build configuration list for PBXNativeTarget "dopplframeworkTests" */ = {
 			isa = XCConfigurationList;
@@ -6186,6 +6196,7 @@
 				637643631F1B1DD600867934 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
