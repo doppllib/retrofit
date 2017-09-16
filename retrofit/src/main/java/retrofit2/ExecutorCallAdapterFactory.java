@@ -15,10 +15,15 @@
  */
 package retrofit2;
 
+import android.support.annotation.NonNull;
+
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.concurrent.Executor;
+
+import javax.annotation.Nullable;
+
 import okhttp3.Request;
 
 import static retrofit2.Utils.checkNotNull;

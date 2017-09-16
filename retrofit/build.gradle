@@ -27,7 +27,7 @@ dependencies {
   testApt "co.doppl.lib:testapt:$project.ext.javaCoreVersion"
 
   testCompile 'org.assertj:assertj-core:1.7.0'
-  testDoppl 'co.doppl.org.assertj:assertj-core:1.7.0.0'
+  testDoppl 'co.doppl.org.assertj:assertj-core:1.7.0.3'
 
 }
 

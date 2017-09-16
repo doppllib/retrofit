@@ -8,9 +8,21 @@ import okhttp3.Request;
 
 public class UrlSessionCallFactory implements okhttp3.Call.Factory
 {
+    private final Object urlSessionReference;
+
+    public UrlSessionCallFactory()
+    {
+        this(new DefaultUrlSessionConfigurationProvider());
+    }
+
+    public UrlSessionCallFactory(UrlSessionConfigurationProvider urlSessionProvider)
+    {
+        this.urlSessionReference = urlSessionProvider.createUrlSession();
+    }
+
     @Override
     public Call newCall(Request request)
     {
-        return new UrlSessionCall(request);
+        return new UrlSessionCall(urlSessionReference, request);
     }
 }

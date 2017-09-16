@@ -29,7 +29,7 @@ dependencies {
   doppl project(':retrofit')
 
   compile "com.google.code.gson:gson:2.6.2"
-  doppl "co.doppl.com.google.code.gson:gson:2.6.2.3"
+  doppl "co.doppl.com.google.code.gson:gson:2.6.2.4"
 
   testCompile 'org.assertj:assertj-core:1.7.0'
   testDoppl 'co.doppl.org.assertj:assertj-core:1.7.0.0'

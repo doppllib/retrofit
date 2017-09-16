@@ -9,7 +9,7 @@ buildscript {
     }
     dependencies {
         classpath 'net.ltgt.gradle:gradle-apt-plugin:0.9'
-        classpath 'co.doppl:gradle:0.8.3'
+        classpath 'co.doppl:gradle:0.8.6'
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
     }
 }
@@ -24,10 +24,10 @@ allprojects {
 
 subprojects{
     group = 'co.doppl.com.squareup.retrofit2.urlsession'
-    version = '2.3.0.0'
+    version = '2.3.0.4'
     ext.bintrayGitUrl = 'https://github.com/kpgalligan/retrofit.git'
-    ext.javaCoreVersion = '0.8.1'
-    ext.dopplCoreVersion = '0.8.1.0'
+    ext.javaCoreVersion = '0.8.3'
+    ext.dopplCoreVersion = '0.8.3.0'
     ext.javaOkhttpVersion = '3.4.2'
-    ext.dopplOkhttpVersion = '3.4.2.0'
+    ext.dopplOkhttpVersion = '3.4.2.1'
 }

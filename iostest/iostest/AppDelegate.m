@@ -9,6 +9,7 @@
 #import "AppDelegate.h"
 #import "DopplRuntime.h"
 #import "CoTouchlabDopplTestingDopplJunitTestHelper.h"
+#import "RunAll.h"
 
 @interface AppDelegate ()
 
@@ -19,7 +20,13 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     [DopplRuntime start];
-    [CoTouchlabDopplTestingDopplJunitTestHelper runResourceWithNSString:@"dopplTests.txt"];
+//    [CoTouchlabDopplTestingDopplJunitTestHelper runResourceWithNSString:@"dopplTests.txt"];
+    //http200Sync
+//    [CoTouchlabDopplTestingDopplJunitTestHelper runSpecificWithNSString:@"retrofit2.CallTest#http200Async"];
+//    [CoTouchlabDopplTestingDopplJunitTestHelper runSpecificWithNSString:@"retrofit2.CallTest#http200Sync"];
+//    [RunAll runOneWithNSString:@"retrofit2.CallTest"];
+    [RunAll runAll];
+    
     return YES;
 }
 
