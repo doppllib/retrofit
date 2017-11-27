@@ -8,6 +8,10 @@ public class DefaultUrlSessionConfigurationProvider implements UrlSessionConfigu
     @Override
     public native Object createUrlSession()/*-[
         NSURLSessionConfiguration *sessionConfiguration = [NSURLSessionConfiguration defaultSessionConfiguration];
+
+//        NSOperationQueue *queue = [[NSOperationQueue alloc] init];
+//        queue.maxConcurrentOperationCount = 5;
+
         return [NSURLSession sessionWithConfiguration:sessionConfiguration
                                         delegate:(id<NSURLSessionDataDelegate>)self
                                    delegateQueue:nil];

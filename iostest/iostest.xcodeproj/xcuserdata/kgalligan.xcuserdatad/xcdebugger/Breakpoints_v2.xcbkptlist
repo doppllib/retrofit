@@ -9,78 +9,78 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "dopplframework/test/Retrofit2CallTest.m"
-            timestampString = "527221603.370728"
+            filePath = "dopplframework/test/co_doppl_com_squareup_okhttp3_mockwebserver_3_4_2_3/Okhttp3MockwebserverMockWebServer.m"
+            timestampString = "532278123.990789"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "949"
-            endingLineNumber = "949"
-            landmarkName = "-http404Async"
+            startingLineNumber = "1138"
+            endingLineNumber = "1138"
+            landmarkName = "Okhttp3MockwebserverMockWebServer_3_acceptConnections"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "dopplframework/test/Retrofit2RetrofitTest.m"
+            timestampString = "532234426.884139"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1419"
+            endingLineNumber = "1419"
+            landmarkName = "-callbackExecutorUsedForFailure"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "dopplframework/test/Retrofit2CallTest.m"
-            timestampString = "527221986.345233"
+            filePath = "dopplframework/test/Retrofit2RetrofitTest.m"
+            timestampString = "532234426.884576"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "3475"
-            endingLineNumber = "3475"
-            landmarkName = "+__metadata"
+            startingLineNumber = "1421"
+            endingLineNumber = "1421"
+            landmarkName = "-callbackExecutorUsedForFailure"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "dopplframework/test/Retrofit2CallTest.m"
-            timestampString = "527221989.148295"
+            filePath = "../../../devel/j2objc/jre_emul/build_result/Classes/java/net/SocksSocketImpl.m"
+            timestampString = "532234509.023215"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "3481"
-            endingLineNumber = "3481"
-            landmarkName = "+__metadata"
+            startingLineNumber = "597"
+            endingLineNumber = "597"
+            landmarkName = "-close"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "iostest/AppDelegate.m"
-            timestampString = "527232219.300155"
+            filePath = "../../../devel/j2objc/jre_emul/build_result/Classes/java/net/PlainSocketImpl.m"
+            timestampString = "532235111.041761"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "17"
-            endingLineNumber = "17"
-            landmarkName = "@implementation AppDelegate"
-            landmarkType = "3">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "dopplframework/main/Retrofit2Retrofit.m"
-            timestampString = "527271704.701521"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "178"
-            endingLineNumber = "178"
-            landmarkName = "-nextCallAdapterWithRetrofit2CallAdapter_Factory:withJavaLangReflectType:withJavaLangAnnotationAnnotationArray:"
-            landmarkType = "7">
+            startingLineNumber = "237"
+            endingLineNumber = "237"
+            landmarkName = "JavaNetPlainSocketImpl_socketClose0"
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

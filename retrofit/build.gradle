@@ -7,7 +7,9 @@ sourceCompatibility = 1.7
 targetCompatibility = 1.7
 
 dependencies {
-  testCompile 'junit:junit:4.11'
+  testCompile "junit:junit:$doppl_junit_java"
+  testDoppl "co.doppl.junit:junit:$doppl_junit_doppl"
+
   compileOnly 'com.google.code.findbugs:jsr305:3.0.2'
   compile "com.squareup.okhttp3:okhttp:$project.ext.javaOkhttpVersion"
   doppl "co.doppl.com.squareup.okhttp3:okhttp:$project.ext.dopplOkhttpVersion"
@@ -18,7 +20,8 @@ dependencies {
   testCompile "co.doppl.lib:androidbasetest:$project.ext.javaCoreVersion"
   testDoppl "co.doppl.lib:androidbasetest:$project.ext.dopplCoreVersion"
 
-  testCompile 'org.mockito:mockito-core:1.9.5'
+  testCompile "org.mockito:mockito-core:$doppl_mockito_java"
+  testDoppl "co.doppl.org.mockito:mockito-core:$doppl_mockito_doppl"
   testCompile 'com.google.guava:guava:19.0'
 
   testCompile "com.squareup.okhttp3:mockwebserver:$project.ext.javaOkhttpVersion"
@@ -26,8 +29,8 @@ dependencies {
 
   testApt "co.doppl.lib:testapt:$project.ext.javaCoreVersion"
 
-  testCompile 'org.assertj:assertj-core:1.7.0'
-  testDoppl 'co.doppl.org.assertj:assertj-core:1.7.0.3'
+  testCompile "org.assertj:assertj-core:$doppl_assertj_core_java"
+  testDoppl "co.doppl.org.assertj:assertj-core:$doppl_assertj_core_doppl"
 
 }
 
@@ -41,9 +44,9 @@ test{
 }
 
 dopplConfig {
-
-  copyMainOutput "../iostest/dopplframework/main"
-  copyTestOutput "../iostest/dopplframework/test"
-  copyDependencies true
-
+  javaDebug true
+  testFramework{
+    libMockito = false
+    libJunit = false
+  }
 }

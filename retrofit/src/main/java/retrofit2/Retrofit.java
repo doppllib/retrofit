@@ -34,7 +34,6 @@ import retrofit2.http.GET;
 import retrofit2.http.HTTP;
 import retrofit2.http.Header;
 import retrofit2.http.Url;
-import retrofit2.ios.IosCallFactory;
 import retrofit2.urlsession.UrlSessionCallFactory;
 
 
@@ -179,7 +178,7 @@ public final class Retrofit {
 
   /**
    * The factory used to create {@linkplain okhttp3.Call OkHttp calls} for sending a HTTP requests.
-   * Typically an instance of {@link OkHttpClient}.
+   * Typically an instance of OkHttpClient.
    */
   public okhttp3.Call.Factory callFactory() {
     return callFactory;
@@ -432,13 +431,11 @@ public final class Retrofit {
      * This is a convenience method for calling {@link #callFactory}.
      */
     public Builder client(OkHttpClient client) {
-      return callFactory(checkNotNull(client, "client == null"));
+      throw new UnsupportedOperationException("J2objc doesn't support OkHttpClient");
     }
 
     /**
      * Specify a custom call factory for creating {@link Call} instances.
-     * <p>
-     * Note: Calling {@link #client} automatically sets this value.
      */
     public Builder callFactory(okhttp3.Call.Factory factory) {
       this.callFactory = checkNotNull(factory, "factory == null");
@@ -558,8 +555,8 @@ public final class Retrofit {
     /**
      * Create the {@link Retrofit} instance using the configured values.
      * <p>
-     * Note: If neither {@link #client} nor {@link #callFactory} is called a default {@link
-     * OkHttpClient} will be created and used.
+     * Note: If neither {@link #client} nor {@link #callFactory} is called a default
+     * OkHttpClient will be created and used.
      */
     public Retrofit build() {
       if (baseUrl == null) {
@@ -567,9 +564,9 @@ public final class Retrofit {
       }
 
       okhttp3.Call.Factory callFactory = this.callFactory;
-      boolean useUrlsession = true;
+
       if (callFactory == null) {
-        callFactory = useUrlsession ? new UrlSessionCallFactory() : new IosCallFactory();
+        callFactory = new UrlSessionCallFactory();
       }
 
       Executor callbackExecutor = this.callbackExecutor;

@@ -1,0 +1,47 @@
+
+apply plugin: 'java'
+apply plugin: 'co.doppl.gradle'
+apply plugin: 'maven-publish'
+apply plugin: 'net.ltgt.apt'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+dependencies {
+  testCompile "junit:junit:$doppl_junit_java"
+  testDoppl "co.doppl.junit:junit:$doppl_junit_doppl"
+
+  compileOnly 'com.google.code.findbugs:jsr305:3.0.2'
+  testCompile "co.doppl.lib:androidbasetest:$project.ext.javaCoreVersion"
+  testDoppl "co.doppl.lib:androidbasetest:$project.ext.dopplCoreVersion"
+
+  compile "com.squareup.okhttp3:okhttp:$project.ext.javaOkhttpVersion"
+  doppl "co.doppl.com.squareup.okhttp3:okhttp:$project.ext.dopplOkhttpVersion"
+
+  testCompile "com.squareup.okhttp3:mockwebserver:$project.ext.javaOkhttpVersion"
+  testDoppl "co.doppl.com.squareup.okhttp3:mockwebserver:$project.ext.dopplOkhttpVersion"
+
+  testApt "co.doppl.lib:testapt:$project.ext.javaCoreVersion"
+
+  compile project(':retrofit')
+  testCompile project(':retrofit')
+  doppl "$group:retrofit:$version"
+
+  testCompile "org.assertj:assertj-core:$doppl_assertj_core_java"
+  testDoppl "co.doppl.org.assertj:assertj-core:$doppl_assertj_core_doppl"
+}
+
+ext.artifactId = 'converter-java8'
+
+apply from: "$dopplSharedScriptHome/doppllibpublish.gradle"
+apply from: "$dopplSharedScriptHome/bintray.gradle"
+
+test{
+  enabled = false
+}
+
+dopplConfig {
+  copyMainOutput "../../ios/converters/java8/ios/doppllib/main"
+  copyTestOutput "../../ios/converters/java8/ios/doppllib/test"
+  copyDependencies true
+}

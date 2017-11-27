@@ -8,7 +8,8 @@ sourceCompatibility = 1.7
 targetCompatibility = 1.7
 
 dependencies {
-  compile 'junit:junit:4.11'
+  testCompile "junit:junit:$doppl_junit_java"
+  testDoppl "co.doppl.junit:junit:$doppl_junit_doppl"
 
   compileOnly 'com.google.code.findbugs:jsr305:3.0.2'
 
@@ -28,10 +29,10 @@ dependencies {
   testApt "co.doppl.lib:testapt:$project.ext.javaCoreVersion"
 
   compile project(':retrofit')
-  doppl project(':retrofit')
+    doppl "$group:retrofit:$version"
 
-  testCompile 'org.assertj:assertj-core:1.7.0'
-  testDoppl 'co.doppl.org.assertj:assertj-core:1.7.0.0'
+  testCompile "org.assertj:assertj-core:$doppl_assertj_core_java"
+  testDoppl "co.doppl.org.assertj:assertj-core:$doppl_assertj_core_doppl"
 }
 
 ext.artifactId = 'converter-scalars'

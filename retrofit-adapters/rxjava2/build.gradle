@@ -8,7 +8,8 @@ sourceCompatibility = 1.7
 targetCompatibility = 1.7
 
 dependencies {
-  testCompile 'junit:junit:4.11'
+  testCompile "junit:junit:$doppl_junit_java"
+  testDoppl "co.doppl.junit:junit:$doppl_junit_doppl"
 
   compileOnly 'com.google.code.findbugs:jsr305:3.0.2'
   testCompile "co.doppl.lib:androidbasetest:$project.ext.javaCoreVersion"
@@ -23,13 +24,13 @@ dependencies {
 
   compile project(':retrofit')
   testCompile project(':retrofit')
-  doppl project(':retrofit')
+  doppl "$group:retrofit:$version"
 
-  compile 'io.reactivex.rxjava2:rxjava:2.0.8'
-  doppl "co.doppl.io.reactivex.rxjava2:rxjava:2.0.8.0"
+  compile "io.reactivex.rxjava2:rxjava:$doppl_rxjava2_java"
+  doppl "co.doppl.io.reactivex.rxjava2:rxjava:$doppl_rxjava2_doppl"
 
-  testCompile 'org.assertj:assertj-core:1.7.0'
-  testDoppl 'co.doppl.org.assertj:assertj-core:1.7.0.0'
+  testCompile "org.assertj:assertj-core:$doppl_assertj_core_java"
+  testDoppl "co.doppl.org.assertj:assertj-core:$doppl_assertj_core_doppl"
 }
 
 ext.artifactId = 'adapter-rxjava2'
@@ -42,8 +43,8 @@ test{
 }
 
 dopplConfig {
-  copyMainOutput "../retrofit-adapter-rxjava2/retrofitframework/main"
-  copyTestOutput "../retrofit-adapter-rxjava2/retrofitframework/test"
+  copyMainOutput "../../ios/adapters/rxjava2/ios/doppllib/main"
+  copyTestOutput "../../ios/adapters/rxjava2/ios/doppllib/test"
   copyDependencies true
 
 }

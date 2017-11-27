@@ -55,6 +55,8 @@ import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
+import retrofit2.urlsession.UrlSessionCallFactory;
+
 
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import static okhttp3.mockwebserver.SocketPolicy.DISCONNECT_AT_START;
@@ -1281,10 +1283,11 @@ public final class RetrofitTest {
       }
 
       @Override public void onFailure(Call<ResponseBody> call, Throwable t) {
+        System.out.println("ISCALLED callbackExecutorUsedForFailure");
         latch.countDown();
       }
     });
-    assertTrue("Latch await timed out", latch.await(5, TimeUnit.SECONDS));
+    assertTrue("Latch await timed out", latch.await(50, TimeUnit.SECONDS));
 
     verify(executor).execute(any(Runnable.class));
     verifyNoMoreInteractions(executor);
@@ -1327,7 +1330,7 @@ public final class RetrofitTest {
 
   public static class MyFactory implements okhttp3.Call.Factory {
     @Override public okhttp3.Call newCall(Request request) {
-      return new OkHttpClient().newCall(request);
+      return new UrlSessionCallFactory().newCall(request);
     }
   }
 
@@ -1360,6 +1363,7 @@ public final class RetrofitTest {
 
   public static class MyExecutor3 implements Executor {
     @Override public void execute(Runnable command) {
+      System.out.println("ISCALLED MyExecutor3");
       command.run();
     }
   }

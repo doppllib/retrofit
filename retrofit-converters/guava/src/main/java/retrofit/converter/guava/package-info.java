@@ -1,4 +1,4 @@
-@ParametersAreNonnullByDefault
+//@ParametersAreNonnullByDefault
 package retrofit.converter.guava;
 
-import javax.annotation.ParametersAreNonnullByDefault;
+//import javax.annotation.ParametersAreNonnullByDefault;

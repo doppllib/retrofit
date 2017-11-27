@@ -31,7 +31,7 @@ class Platform {
   }
 
   private static Platform findPlatform() {
-    return new Android();
+    return Looper.getMainLooper() == null ? new Platform() : new Android();
   }
 
   @Nullable Executor defaultCallbackExecutor() {

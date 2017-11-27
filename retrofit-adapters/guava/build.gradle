@@ -1,0 +1,57 @@
+
+apply plugin: 'java'
+apply plugin: 'co.doppl.gradle'
+apply plugin: 'maven-publish'
+apply plugin: 'net.ltgt.apt'
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+dependencies {
+  testCompile 'junit:junit:4.11'
+
+//  compileOnly 'com.google.code.findbugs:jsr305:3.0.2'
+  testCompile "co.doppl.lib:androidbasetest:$project.ext.javaCoreVersion"
+  testDoppl "co.doppl.lib:androidbasetest:$project.ext.dopplCoreVersion"
+
+  compile 'com.google.guava:guava:19.0'
+
+  testCompile "com.squareup.okhttp3:mockwebserver:$project.ext.javaOkhttpVersion"
+  testDoppl "co.doppl.com.squareup.okhttp3:mockwebserver:$project.ext.dopplOkhttpVersion"
+
+  testApt "co.doppl.lib:testapt:$project.ext.javaCoreVersion"
+
+//  compile 'com.squareup.retrofit2:retrofit:2.3.0'
+//  doppl "$group:retrofit:$version"
+  compile project(':retrofit')
+  testCompile project(':retrofit')
+  doppl "$group:retrofit:$version"
+
+  testCompile "org.assertj:assertj-core:$doppl_assertj_core_java"
+  testDoppl "co.doppl.org.assertj:assertj-core:$doppl_assertj_core_doppl"
+}
+
+ext.artifactId = 'adapter-guava'
+
+apply from: "$dopplSharedScriptHome/doppllibpublish.gradle"
+apply from: "$dopplSharedScriptHome/bintray.gradle"
+
+test{
+  enabled = false
+}
+
+dopplConfig {
+//  copyMainOutput "../retrofit-adapter-guava/retrofitframework/main"
+//  copyTestOutput "../retrofit-adapter-guava/retrofitframework/test"
+  copyMainOutput "../../ios/adapters/guava/ios/doppllib/main"
+  copyTestOutput "../../ios/adapters/guava/ios/doppllib/test"
+  copyDependencies true
+
+  mainFramework{
+    libGuava = true
+  }
+
+  testFramework{
+    libGuava = true
+  }
+}

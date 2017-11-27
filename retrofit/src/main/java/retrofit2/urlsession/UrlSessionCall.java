@@ -1,8 +1,9 @@
 package retrofit2.urlsession;
+import android.os.Looper;
+
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
@@ -10,7 +11,6 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import okhttp3.Callback;
 import okhttp3.Headers;
-import okhttp3.HttpUrl;
 import okhttp3.MediaType;
 import okhttp3.Protocol;
 import okhttp3.Request;
@@ -18,7 +18,6 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.internal.Version;
 import okhttp3.internal.http.RealResponseBody;
-import okhttp3.internal.platform.Platform;
 import okio.Buffer;
 import okio.Okio;
 import okio.Source;
@@ -43,11 +42,12 @@ public class UrlSessionCall implements okhttp3.Call
     private final List<HeaderEntry> headers = new ArrayList<HeaderEntry>();
 
     private volatile boolean executed;
+    private volatile boolean canceled;
 
     private final AtomicReference<Response>    response = new AtomicReference<>();
     private final AtomicReference<IOException> responseError = new AtomicReference<>();
     private final CountDownLatch latch = new CountDownLatch(1);
-    private okhttp3.Callback responseCallback;
+    private final AtomicReference<okhttp3.Callback> responseCallbackRef = new AtomicReference<>();
 
     private final Object urlSessionReference;
     private Object urlSessionTask;
@@ -107,6 +107,9 @@ public class UrlSessionCall implements okhttp3.Call
 
     private void runRequestCall() throws IOException
     {
+        if (canceled) {
+            throw new IOException("Canceled");
+        }
         Request request = prepRequestHeaders(originalRequest);
         Headers headers = request.headers();
 
@@ -176,7 +179,7 @@ public class UrlSessionCall implements okhttp3.Call
     NSMutableURLRequest *request =
           [NSMutableURLRequest requestWithURL:[NSURL URLWithString:self->makeRequestUrl_]];
       request.cachePolicy = NSURLRequestUseProtocolCachePolicy;
-      int readTimeout = 10000;
+      int readTimeout = 250;
       request.timeoutInterval = readTimeout > 0 ? (readTimeout / 1000.0) : JavaLangDouble_MAX_VALUE;
       int n = [self->headers_ size];
       for (int i = 0; i < n; i++) {
@@ -194,64 +197,75 @@ public class UrlSessionCall implements okhttp3.Call
 
       NSURLSessionTask *task = [self->urlSessionReference_ dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable urlResponse,
       NSError * _Nullable error) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self updateUrlSessionTaskWithId:nil];
-                if (error) {
-                    JavaIoIOException *responseException = nil;
-                      NSString *url = @"";//self->makeRequestUrl_;  // Use original URL in any error text.
-                      if ([[error domain] isEqualToString:@"NSURLErrorDomain"]) {
-                        switch ([error code]) {
-                          case NSURLErrorBadURL:
-                            responseException = create_JavaNetMalformedURLException_initWithNSString_(url);
-                            break;
-                          case NSURLErrorCannotConnectToHost:
-                            responseException =
-                                create_JavaNetConnectException_initWithNSString_([error description]);
-                            break;
-                          case NSURLErrorSecureConnectionFailed:
-                            responseException = [self secureConnectionExceptionWithNSString:[error description]];
-                            break;
-                          case NSURLErrorCannotFindHost:
-                            responseException = create_JavaNetUnknownHostException_initWithNSString_(url);
-                            break;
-                          case NSURLErrorTimedOut:
-                            responseException = create_JavaNetSocketTimeoutException_initWithNSString_(url);
-                            break;
-                        }
-                      }
-                      if (!responseException) {
-                        responseException = create_JavaIoIOException_initWithNSString_([error description]);
-                      }
-                      ComGoogleJ2objcNetNSErrorException *cause =
-                          create_ComGoogleJ2objcNetNSErrorException_initWithId_(error);
-                      [responseException initWithJavaLangThrowable:cause];
-                       [self sendErrorWithJavaIoIOException:responseException];
-                }
-                else {
 
-                    if (urlResponse && ![urlResponse isKindOfClass:[NSHTTPURLResponse class]]) {
-                      @throw AUTORELEASE(([[JavaLangAssertionError alloc]
-                                           initWithId:[NSString stringWithFormat:@"Unknown class %@",
-                                               NSStringFromClass([urlResponse class])]]));
+            [self updateUrlSessionTaskWithId:nil];
+
+            if (error) {
+                JavaIoIOException *responseException = nil;
+                  NSString *url = @"";//self->makeRequestUrl_;  // Use original URL in any error text.
+                  if ([[error domain] isEqualToString:@"NSURLErrorDomain"]) {
+                    NSInteger theCode = [error code];
+        switch (theCode) {
+                      case NSURLErrorBadURL:
+                        responseException = create_JavaNetMalformedURLException_initWithNSString_(url);
+                        break;
+                      case NSURLErrorCannotConnectToHost:
+                        responseException =
+                            create_JavaNetConnectException_initWithNSString_([error localizedDescription]);
+                        break;
+                      case NSURLErrorSecureConnectionFailed:
+                        responseException = [self secureConnectionExceptionWithNSString:[error localizedDescription]];
+                        break;
+                      case NSURLErrorCannotFindHost:
+                        responseException = create_JavaNetUnknownHostException_initWithNSString_(url);
+                        break;
+                      case NSURLErrorTimedOut:
+                        responseException = create_JavaNetSocketTimeoutException_initWithNSString_(url);
+                        break;
+                      case NSURLErrorCancelled:
+                        responseException = create_JavaNetSocketTimeoutException_initWithNSString_(@"Canceled");
+                        break;
+                      case NSURLErrorNetworkConnectionLost:
+                        responseException = create_JavaNetSocketTimeoutException_initWithNSString_(@"unexpected end of stream");
+                        break;
                     }
-                    NSHTTPURLResponse *response = (NSHTTPURLResponse *) urlResponse;
-                    int responseCode = (int) response.statusCode;
+                  }
+                  if (!responseException) {
+                    responseException = create_JavaIoIOException_initWithNSString_([error localizedDescription]);
+                  }
+//                      ComGoogleJ2objcNetNSErrorException *cause =
+//                          create_ComGoogleJ2objcNetNSErrorException_initWithId_(error);
+//                      [responseException initWithJavaLangThrowable:cause];
+                  [self sendErrorWithJavaIoIOException:responseException];
+            }
+            else {
 
-                    // Clear request headers to make room for the response headers.
-                    [self->headers_ clear];
-
-                    // Copy remaining response headers.
-                    [response.allHeaderFields enumerateKeysAndObjectsUsingBlock:
-                        ^(id key, id value, BOOL *stop) {
-                      [self addHeaderWithNSString:key withNSString:value];
-                    }];
-
-                        [self constructResponseWithInt:responseCode withByteArray:[IOSByteArray arrayWithNSData:data]];
+                if (urlResponse && ![urlResponse isKindOfClass:[NSHTTPURLResponse class]]) {
+                  @throw AUTORELEASE(([[JavaLangAssertionError alloc]
+                                       initWithId:[NSString stringWithFormat:@"Unknown class %@",
+                                           NSStringFromClass([urlResponse class])]]));
                 }
-            });
+                NSHTTPURLResponse *response = (NSHTTPURLResponse *) urlResponse;
+                int responseCode = (int) response.statusCode;
+
+                // Clear request headers to make room for the response headers.
+                [self->headers_ clear];
+
+                // Copy remaining response headers.
+                [response.allHeaderFields enumerateKeysAndObjectsUsingBlock:
+                    ^(id key, id value, BOOL *stop) {
+                  [self addHeaderWithNSString:key withNSString:value];
+                }];
+
+                    [self constructResponseWithInt:responseCode withByteArray:[IOSByteArray arrayWithNSData:data]];
+            }
+
         }];
-      [task resume];
-      [self updateUrlSessionTaskWithId:task];
+
+        [self updateUrlSessionTaskWithId:task];
+
+        [task resume];
+
       ]-*/;
 
     /**
@@ -279,6 +293,7 @@ public class UrlSessionCall implements okhttp3.Call
 
     public void sendError(IOException ex)
     {
+        Callback responseCallback = responseCallbackRef.get();
         if(responseCallback != null)
         {
             responseCallback.onFailure(this, ex);
@@ -292,7 +307,6 @@ public class UrlSessionCall implements okhttp3.Call
 
     public void constructResponse(int responseCode, byte[] body) throws IOException
     {
-
         Protocol protocol = Protocol.HTTP_1_1;
 
         Headers.Builder builder = new Headers.Builder();
@@ -316,6 +330,7 @@ public class UrlSessionCall implements okhttp3.Call
 
         responseBuilder.body(responseBody);
 
+        Callback responseCallback = responseCallbackRef.get();
         if(responseCallback != null)
         {
             responseCallback.onResponse(this, responseBuilder.build());
@@ -335,7 +350,8 @@ public class UrlSessionCall implements okhttp3.Call
     @Override
     public void enqueue(Callback responseCallback)
     {
-        this.responseCallback = responseCallback;
+        this.responseCallbackRef.set(responseCallback);
+
         try
         {
             runRequestCall();
@@ -353,6 +369,7 @@ public class UrlSessionCall implements okhttp3.Call
     @Override
     public synchronized void cancel()
     {
+        canceled = true;
         if(urlSessionTask != null)
         {
             taskCancel(urlSessionTask);
@@ -373,7 +390,7 @@ public class UrlSessionCall implements okhttp3.Call
     @Override
     public boolean isCanceled()
     {
-        return false;
+        return canceled;
     }
 
     private static class HeaderEntry implements Map.Entry<String, String>

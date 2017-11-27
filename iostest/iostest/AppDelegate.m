@@ -19,13 +19,17 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    [DopplRuntime start];
-//    [CoTouchlabDopplTestingDopplJunitTestHelper runResourceWithNSString:@"dopplTests.txt"];
+//    [DopplRuntime start];
+    [CoTouchlabDopplTestingDopplJunitTestHelper runResourceWithNSString:@"dopplTests.txt"];
     //http200Sync
-//    [CoTouchlabDopplTestingDopplJunitTestHelper runSpecificWithNSString:@"retrofit2.CallTest#http200Async"];
-//    [CoTouchlabDopplTestingDopplJunitTestHelper runSpecificWithNSString:@"retrofit2.CallTest#http200Sync"];
-//    [RunAll runOneWithNSString:@"retrofit2.CallTest"];
-    [RunAll runAll];
+    
+    //callbackExecutorUsedForSuccess
+//    [CoTouchlabDopplTestingDopplJunitTestHelper runSpecificWithNSString:@"retrofit2.RetrofitTest#callbackExecutorUsedForSuccess"];
+//    [CoTouchlabDopplTestingDopplJunitTestHelper runSpecificWithNSString:@"retrofit2.RetrofitTest#callbackExecutorUsedForSuccess"];
+//    [CoTouchlabDopplTestingDopplJunitTestHelper runSpecificWithNSString:@"retrofit2.RetrofitTest#callbackExecutorUsedForFailure"];
+//    [CoTouchlabDopplTestingDopplJunitTestHelper runSpecificWithNSString:@"retrofit2.CallTest"];
+//    [RunAll runOneWithNSString:@"retrofit2.CallTest#cancelOkHttpRequest"];
+//    [RunAll runAll];
     
     return YES;
 }
