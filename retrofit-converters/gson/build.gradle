@@ -45,8 +45,4 @@ test{
   enabled = false
 }
 
-dopplConfig {
-  copyMainOutput "../retrofit-converter-gson/retrofitframework/main"
-  copyTestOutput "../retrofit-converter-gson/retrofitframework/test"
-  copyDependencies true
-}
+

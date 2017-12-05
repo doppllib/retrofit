@@ -179,8 +179,8 @@ public class UrlSessionCall implements okhttp3.Call
     NSMutableURLRequest *request =
           [NSMutableURLRequest requestWithURL:[NSURL URLWithString:self->makeRequestUrl_]];
       request.cachePolicy = NSURLRequestUseProtocolCachePolicy;
-      int readTimeout = 250;
-      request.timeoutInterval = readTimeout > 0 ? (readTimeout / 1000.0) : JavaLangDouble_MAX_VALUE;
+//      int readTimeout = 2500;
+//      request.timeoutInterval = readTimeout > 0 ? (readTimeout / 1000.0) : JavaLangDouble_MAX_VALUE;
       int n = [self->headers_ size];
       for (int i = 0; i < n; i++) {
         Retrofit2UrlsessionUrlSessionCall_HeaderEntry *entry = [self->headers_ getWithInt:i];

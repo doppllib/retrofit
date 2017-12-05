@@ -41,11 +41,6 @@ test{
 }
 
 dopplConfig {
-//  copyMainOutput "../retrofit-adapter-guava/retrofitframework/main"
-//  copyTestOutput "../retrofit-adapter-guava/retrofitframework/test"
-  copyMainOutput "../../ios/adapters/guava/ios/doppllib/main"
-  copyTestOutput "../../ios/adapters/guava/ios/doppllib/test"
-  copyDependencies true
 
   mainFramework{
     libGuava = true

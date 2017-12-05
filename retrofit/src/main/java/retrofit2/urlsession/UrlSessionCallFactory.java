@@ -10,6 +10,11 @@ public class UrlSessionCallFactory implements okhttp3.Call.Factory
 {
     private final Object urlSessionReference;
 
+
+    int connectTimeout;
+    int readTimeout;
+    int writeTimeout;
+
     public UrlSessionCallFactory()
     {
         this(new DefaultUrlSessionConfigurationProvider());

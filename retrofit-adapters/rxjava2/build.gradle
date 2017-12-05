@@ -42,9 +42,3 @@ test{
   enabled = false
 }
 
-dopplConfig {
-  copyMainOutput "../../ios/adapters/rxjava2/ios/doppllib/main"
-  copyTestOutput "../../ios/adapters/rxjava2/ios/doppllib/test"
-  copyDependencies true
-
-}

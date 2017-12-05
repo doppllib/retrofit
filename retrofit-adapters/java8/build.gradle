@@ -36,8 +36,3 @@ test{
   enabled = false
 }
 
-dopplConfig {
-  copyMainOutput "../../ios/adapters/java8/ios/doppllib/main"
-  copyTestOutput "../../ios/adapters/java8/ios/doppllib/test"
-  copyDependencies true
-}

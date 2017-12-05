@@ -739,7 +739,10 @@ public final class RetrofitTest {
     assertThat(retrofit.baseUrl()).isSameAs(url);
   }
 
+  @DopplHacks //No OkHttpClient
   @Test public void clientNullThrows() {
+    if(PlatformUtils.isJ2objc())
+      return;
     try {
       new Retrofit.Builder().client(null);
       fail();
@@ -764,7 +767,10 @@ public final class RetrofitTest {
     assertThat(retrofit.callFactory()).isSameAs(callFactory);
   }
 
+  @DopplHacks //No OkHttpClient
   @Test public void callFactoryClientPropagated() {
+    if(PlatformUtils.isJ2objc())
+      return;
     OkHttpClient client = new OkHttpClient();
     Retrofit retrofit = new Retrofit.Builder()
         .baseUrl("http://example.com/")
@@ -1265,7 +1271,10 @@ public final class RetrofitTest {
     verifyNoMoreInteractions(executor);
   }
 
+  @DopplHacks //DISCONNECT_AT_START doesn't error correctly, but will (eventually) time out
   @Test public void callbackExecutorUsedForFailure() throws InterruptedException {
+    if(PlatformUtils.isJ2objc())
+      return;
     Executor executor = spy(new MyExecutor3());
     Retrofit retrofit = new Retrofit.Builder()
         .baseUrl(server.url("/"))

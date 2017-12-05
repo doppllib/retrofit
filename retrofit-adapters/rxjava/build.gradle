@@ -41,9 +41,3 @@ test{
   enabled = false
 }
 
-dopplConfig {
-  copyMainOutput "../retrofit-adapter-rxjava/retrofitframework/main"
-  copyTestOutput "../retrofit-adapter-rxjava/retrofitframework/test"
-  copyDependencies true
-
-}

@@ -1,0 +1,33 @@
+apply plugin: 'java'
+apply plugin: 'co.doppl.gradle'
+apply plugin: 'maven-publish'
+apply plugin: 'net.ltgt.apt'
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+dependencies {
+  testCompile "junit:junit:$doppl_junit_java"
+  testDoppl "co.doppl.junit:junit:$doppl_junit_doppl"
+
+  compile project(':retrofit')
+  testCompile project(':retrofit')
+  doppl "$group:retrofit:$version"
+}
+
+ext.artifactId = 'retrofitfactory'
+
+apply from: "$dopplSharedScriptHome/doppllibpublish.gradle"
+apply from: "$dopplSharedScriptHome/bintray.gradle"
+
+test{
+  enabled = false
+}
+
+dopplConfig {
+  javaDebug true
+  testFramework{
+    libMockito = false
+    libJunit = false
+  }
+}

@@ -44,9 +44,8 @@ test{
 }
 
 dopplConfig {
-  javaDebug true
+//  javaDebug true
   testFramework{
-    libMockito = false
-    libJunit = false
+    libGuava = true
   }
 }

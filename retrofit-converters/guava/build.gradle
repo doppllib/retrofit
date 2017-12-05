@@ -43,9 +43,6 @@ test{
 }
 
 dopplConfig {
-  copyMainOutput "../../ios/converters/guava/ios/doppllib/main"
-  copyTestOutput "../../ios/converters/guava/ios/doppllib/test"
-  copyDependencies true
 
   mainFramework{
     libGuava = true
