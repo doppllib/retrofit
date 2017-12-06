@@ -1,2 +1,0 @@
-retrofit2.adapter.guava.GuavaCallAdapterFactoryTest
-retrofit2.adapter.guava.ListenableFutureTest

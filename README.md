@@ -27,16 +27,16 @@ for an example of how to create URLSession instances
 | ------------- |:-------------:| :------:|:--------:|
 | Retrofit      | 👍            | 👍     | Not Done |
 | adapters/rxjava        | Unsupported    | N/A    | N/A      |
-| adapters/rxjava2       | 👍             | Not Done     | Not Done |
+| adapters/rxjava2       | 👍             | 🤢     | Not Done |
 | adapters/guava         | 👍             | 👍     | Not Done |
 | adapters/java8         | Unsupported    | N/A    | N/A      |
-| converters/gson        | Not Done       | Not Done     | Not Done |
-| converters/guava       | Not Done       | Not Done     | Not Done |
+| converters/gson        | 👍       | 👍     | Not Done |
+| converters/guava       | 👍       | 👍     | Not Done |
 | converters/jackson     | Unsupported    | N/A    | N/A      |
-| converters/java8       | Not Done       | Not Done     | Not Done |
+| converters/java8       | 👍       | 👍     | Not Done |
 | converters/moshi       | Not Done       | Not Done     | Not Done |
 | converters/protobuf    | Unsupported    | N/A    | N/A      |
-| converters/scalars     | Not Done       | Not Done     | Not Done |
+| converters/scalars     | 👍       | 👍     | Not Done |
 | converters/simplexml   | Unsupported    | N/A    | N/A      |
 | converters/wire        | Unsupported    | N/A    | N/A      |
 
