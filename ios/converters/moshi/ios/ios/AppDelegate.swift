@@ -17,10 +17,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
-//        CoTouchlabDopplTestingDopplJunitTestHelper.runResource(with: "dopplTests.txt")
-        CoTouchlabDopplTestingDopplJunitTestHelper.runSpecific(with: "retrofit2.adapter.guava.ListenableFutureTest#bodySuccess200")
-        CoTouchlabDopplTestingDopplJunitTestHelper.runSpecific(with: "retrofit2.adapter.guava.ListenableFutureTest#bodySuccess404")
-        CoTouchlabDopplTestingDopplJunitTestHelper.runSpecific(with: "retrofit2.adapter.guava.ListenableFutureTest#bodyFailure")
+        CoTouchlabDopplTestingDopplJunitTestHelper.runResource(with: "dopplTests.txt")
         return true
     }
 

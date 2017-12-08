@@ -34,7 +34,7 @@ for an example of how to create URLSession instances
 | converters/guava       | 👍       | 👍     | Not Done |
 | converters/jackson     | Unsupported    | N/A    | N/A      |
 | converters/java8       | 👍       | 👍     | Not Done |
-| converters/moshi       | Not Done       | Not Done     | Not Done |
+| converters/moshi       | 👍       | 👍     | Not Done |
 | converters/protobuf    | Unsupported    | N/A    | N/A      |
 | converters/scalars     | 👍       | 👍     | Not Done |
 | converters/simplexml   | Unsupported    | N/A    | N/A      |
