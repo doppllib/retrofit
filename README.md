@@ -42,17 +42,10 @@ for an example of how to create URLSession instances
 
 
 
-Download
---------
+Usage
+-----
 
-Download [the latest JAR][2] or grab via Maven:
-```xml
-<dependency>
-  <groupId>com.squareup.retrofit2</groupId>
-  <artifactId>retrofit</artifactId>
-  <version>2.3.0</version>
-</dependency>
-```
+
 or Gradle:
 ```groovy
 compile 'com.squareup.retrofit2:retrofit:2.3.0'
