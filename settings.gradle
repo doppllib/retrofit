@@ -1,17 +1,19 @@
 rootProject.name = 'retrofit2'
 
 include 'retrofit'
-//include 'retrofit-adapters/rxjava'
 include 'retrofit-adapters/rxjava2'
 include 'retrofit-adapters/guava'
-//Need CompletableFuture
-//include 'retrofit-adapters/java8'
 include 'retrofit-converters/gson'
 include 'retrofit-converters/guava'
-//include 'retrofit-converters/jackson'
 include 'retrofit-converters/java8'
 include 'retrofit-converters/moshi'
-//include 'retrofit-converters/protobuf'
 include 'retrofit-converters/scalars'
+
+
+//include 'retrofit-adapters/rxjava'
+//Need CompletableFuture
+//include 'retrofit-adapters/java8'
+//include 'retrofit-converters/jackson'
+//include 'retrofit-converters/protobuf'
 //include 'retrofit-converters/simplexml'
 //include 'retrofit-converters/wire'
