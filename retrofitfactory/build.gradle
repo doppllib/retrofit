@@ -10,12 +10,17 @@ dependencies {
   testCompile "junit:junit:$doppl_junit_java"
   testDoppl "co.doppl.junit:junit:$doppl_junit_doppl"
 
-  compile project(':retrofit')
+  testCompile "org.mockito:mockito-core:$doppl_mockito_java"
+  testDoppl "co.doppl.org.mockito:mockito-core:$doppl_mockito_doppl"
+
+
+  compileOnly project(':retrofit')
   testCompile project(':retrofit')
   doppl "$group:retrofit:$version"
 }
 
 ext.artifactId = 'retrofitfactory'
+ext.javaVersion = doppl_retrofit2_java
 
 apply from: "$dopplSharedScriptHome/doppllibpublish.gradle"
 apply from: "$dopplSharedScriptHome/bintray.gradle"

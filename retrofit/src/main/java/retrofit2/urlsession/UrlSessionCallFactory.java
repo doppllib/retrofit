@@ -8,12 +8,7 @@ import okhttp3.Request;
 
 public class UrlSessionCallFactory implements okhttp3.Call.Factory
 {
-    private final Object urlSessionReference;
-
-
-    int connectTimeout;
-    int readTimeout;
-    int writeTimeout;
+    public final Object urlSessionReference;
 
     public UrlSessionCallFactory()
     {
