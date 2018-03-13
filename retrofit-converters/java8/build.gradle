@@ -25,7 +25,8 @@ dependencies {
 
   compile project(':retrofit')
   testCompile project(':retrofit')
-  doppl "$group:retrofit:$version"
+  doppl project(':retrofit')
+//  doppl "$group:retrofit:$version"
 
   testCompile "org.assertj:assertj-core:$doppl_assertj_core_java"
   testDoppl "co.doppl.org.assertj:assertj-core:$doppl_assertj_core_doppl"

@@ -13,7 +13,7 @@ dependencies {
 
   compileOnly 'com.google.code.findbugs:jsr305:3.0.2'
 
-  doppl "co.doppl.com.squareup.okhttp3:okhttp-ws:$project.ext.dopplOkhttpVersion"
+//  doppl "co.doppl.com.squareup.okhttp3:okhttp-ws:$project.ext.dopplOkhttpVersion"
 
   testCompile "co.doppl.lib:androidbasetest:$project.ext.javaCoreVersion"
   testDoppl "co.doppl.lib:androidbasetest:$project.ext.dopplCoreVersion"
@@ -31,13 +31,14 @@ dependencies {
   testApt "co.doppl.lib:testapt:$project.ext.javaCoreVersion"
 
   compile project(':retrofit')
-    doppl "$group:retrofit:$version"
+  doppl project(':retrofit')
+//    doppl "$group:retrofit:$version"
 
   testCompile "org.assertj:assertj-core:$doppl_assertj_core_java"
   testDoppl "co.doppl.org.assertj:assertj-core:$doppl_assertj_core_doppl"
 }
 
-ext.artifactId = 'converter-scalars'
+ext.artifactId = 'converter-moshi'
 
 apply from: "$dopplSharedScriptHome/doppllibpublish.gradle"
 apply from: "$dopplSharedScriptHome/bintray.gradle"

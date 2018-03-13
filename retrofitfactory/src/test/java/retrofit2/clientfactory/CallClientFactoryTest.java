@@ -25,7 +25,7 @@ public class CallClientFactoryTest
         CallClientFactory.UrlSessionBuilder sessionBuilder = Mockito.mock(CallClientFactory.UrlSessionBuilder.class);
         callClientFactory.initIos(sessionBuilder);
 
-        Mockito.verify(sessionBuilder, )
+//        Mockito.verify(sessionBuilder, )
 
     }
 

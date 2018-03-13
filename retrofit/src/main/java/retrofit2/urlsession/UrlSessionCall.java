@@ -1,5 +1,4 @@
 package retrofit2.urlsession;
-import android.os.Looper;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -213,7 +212,7 @@ public class UrlSessionCall implements okhttp3.Call
                             create_JavaNetConnectException_initWithNSString_([error localizedDescription]);
                         break;
                       case NSURLErrorSecureConnectionFailed:
-                        responseException = [self secureConnectionExceptionWithNSString:[error localizedDescription]];
+                        responseException = [Retrofit2UrlsessionUrlSessionCall secureConnectionExceptionWithNSString:[error localizedDescription]];
                         break;
                       case NSURLErrorCannotFindHost:
                         responseException = create_JavaNetUnknownHostException_initWithNSString_(url);

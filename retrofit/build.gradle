@@ -7,15 +7,15 @@ sourceCompatibility = 1.7
 targetCompatibility = 1.7
 
 dependencies {
-  testCompile "junit:junit:$doppl_junit_java"
-  testDoppl "co.doppl.junit:junit:$doppl_junit_doppl"
-
   compileOnly 'com.google.code.findbugs:jsr305:3.0.2'
   compile "com.squareup.okhttp3:okhttp:$project.ext.javaOkhttpVersion"
   doppl "co.doppl.com.squareup.okhttp3:okhttp:$project.ext.dopplOkhttpVersion"
 
   compileOnly "co.doppl.lib:androidbase:$project.ext.javaCoreVersion"
   doppl "co.doppl.lib:androidbase:$project.ext.dopplCoreVersion"
+
+  testCompile "junit:junit:$doppl_junit_java"
+  testDoppl "co.doppl.junit:junit:$doppl_junit_doppl"
 
   testCompile "co.doppl.lib:androidbasetest:$project.ext.javaCoreVersion"
   testDoppl "co.doppl.lib:androidbasetest:$project.ext.dopplCoreVersion"
@@ -32,6 +32,8 @@ dependencies {
   testCompile "org.assertj:assertj-core:$doppl_assertj_core_java"
   testDoppl "co.doppl.org.assertj:assertj-core:$doppl_assertj_core_doppl"
 
+  testDoppl 'com.google.guava:guava:19.0:sources'
+
 }
 
 ext.artifactId = 'retrofit'
@@ -45,7 +47,7 @@ test{
 
 dopplConfig {
 //  javaDebug true
-  testFramework{
-    libGuava = true
-  }
+//  testFramework{
+//    libGuava = true
+//  }
 }

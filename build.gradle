@@ -31,4 +31,5 @@ subprojects{
     ext.dopplCoreVersion = doppl_core_doppl
     ext.javaOkhttpVersion = doppl_okhttp_java
     ext.dopplOkhttpVersion = doppl_okhttp_doppl
+    ext.skipJavaPublication = true
 }

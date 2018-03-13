@@ -27,7 +27,8 @@ dependencies {
   testApt "co.doppl.lib:testapt:$project.ext.javaCoreVersion"
 
   compile project(':retrofit')
-  doppl "$group:retrofit:$version"
+  doppl project(':retrofit')
+//  doppl "$group:retrofit:$version"
 
   compile "com.google.code.gson:gson:$doppl_gson262_java"
   doppl "co.doppl.com.google.code.gson:gson:$doppl_gson262_doppl"

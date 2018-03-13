@@ -16,6 +16,8 @@ dependencies {
   testDoppl "co.doppl.lib:androidbasetest:$project.ext.dopplCoreVersion"
 
   testCompile 'com.google.guava:guava:19.0'
+  testDoppl 'com.google.guava:guava:19.0:sources'
+
 
   testCompile "com.squareup.okhttp3:mockwebserver:$project.ext.javaOkhttpVersion"
   testDoppl "co.doppl.com.squareup.okhttp3:mockwebserver:$project.ext.dopplOkhttpVersion"
@@ -24,7 +26,8 @@ dependencies {
 
   compile project(':retrofit')
   testCompile project(':retrofit')
-  doppl "$group:retrofit:$version"
+  doppl project(':retrofit')
+//  doppl "$group:retrofit:$version"
 
   compile "io.reactivex.rxjava2:rxjava:$doppl_rxjava2_java"
   doppl "co.doppl.io.reactivex.rxjava2:rxjava:$doppl_rxjava2_doppl"

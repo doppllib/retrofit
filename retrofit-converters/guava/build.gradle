@@ -16,6 +16,7 @@ dependencies {
   testDoppl "co.doppl.lib:androidbasetest:$project.ext.dopplCoreVersion"
 
   compile 'com.google.guava:guava:19.0'
+  doppl 'com.google.guava:guava:19.0:sources'
 
   compile "com.squareup.okhttp3:okhttp:$project.ext.javaOkhttpVersion"
   doppl "co.doppl.com.squareup.okhttp3:okhttp:$project.ext.dopplOkhttpVersion"
@@ -27,7 +28,8 @@ dependencies {
 
   compile project(':retrofit')
   testCompile project(':retrofit')
-  doppl "$group:retrofit:$version"
+  doppl project(':retrofit')
+//  doppl "$group:retrofit:$version"
 
   testCompile "org.assertj:assertj-core:$doppl_assertj_core_java"
   testDoppl "co.doppl.org.assertj:assertj-core:$doppl_assertj_core_doppl"
@@ -44,11 +46,11 @@ test{
 
 dopplConfig {
 
-  mainFramework{
+  /*mainFramework{
     libGuava = true
   }
 
   testFramework{
     libGuava = true
-  }
+  }*/
 }
